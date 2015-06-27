@@ -15,14 +15,17 @@ use self::piston_window::{
     Ellipse,
     PistonWindow,
     clear,
+    default_draw_state,
 };
+use self::piston_window::ellipse::circle;
 
 pub struct Ball<'a> {
     color: Pnt3<u8>,
     base_color: Pnt3<u8>,
     delta: Iso2<f32>,
     body:  Rc<RefCell<RigidBody>>,
-    gfx:   CircleShape<'a>
+    gfx:   CircleShape<'a>,
+    newgfx: Ellipse,
 }
 
 impl<'a> Ball<'a> {
@@ -37,6 +40,7 @@ impl<'a> Ball<'a> {
             base_color: color,
             delta: delta,
             gfx:   CircleShape::new().unwrap(),
+            newgfx: Ellipse::new([color.x as f32 / 255.0, color.y as f32 / 255.0, color.z as f32 / 255.0, 1.0]),
             body:  body
         };
 
@@ -76,9 +80,10 @@ impl<'a> Ball<'a> {
     }
 
     pub fn new_draw(&self, e: &mut PistonWindow) {
-        e.draw_2d(|_c, g| {
-                clear([0.5, 1.0, 0.5, 1.0], g);
-            });
+        e.draw_2d(|c, g| {
+            let pos = self.gfx.get_position();
+            self.newgfx.draw(circle(pos.x as f64, pos.y as f64, self.gfx.get_radius() as f64), default_draw_state(), c.transform, g);
+        });
     }
 
     pub fn select(&mut self) {

@@ -165,13 +165,11 @@ impl<'a> NewTestbed<'a> {
 
     fn run_loop(&mut self, mut state: TestbedState) {
         for mut e in self.pwindow.clone() {
-            /*
             e.draw_2d(|_c, g| {
-                clear([0.5, 1.0, 0.5, 1.0], g);
+                clear([0.0, 0.0, 0.0, 1.0], g);
             });
-            */
-            let old = false;
 
+            let old = false;
             if old {
                 self.old_run_step(&mut state);
             }

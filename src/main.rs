@@ -44,7 +44,7 @@ fn create_the_walls(world: &mut World) {
 
 
 fn create_the_balls(world: &mut World) {
-    let num     = (4000.0f32.sqrt()) as usize;
+    let num     = (40.0f32.sqrt()) as usize;
     let rad     = 0.5;
     let shift   = 2.5 * rad;
     let centerx = shift * (num as f32) / 2.0;
