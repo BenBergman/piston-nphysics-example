@@ -1,0 +1,24 @@
+[package]
+name    = "nex"
+version = "0.1.0"
+authors = [ "Sébastien Crozet <developer@crozet.re>" ]
+
+[dependencies]
+num = "*"
+rand = "*"
+nalgebra = "*"
+ncollide = "*"
+piston = "*"
+
+[dependencies.piston2d-graphics]
+git = "https://github.com/pistondevelopers/graphics"
+
+[dependencies.piston2d-opengl_graphics]
+git = "https://github.com/pistondevelopers/opengl_graphics"
+
+[dependencies.nphysics_testbed2d]
+path = "./src/nphysics_testbed2d"
+
+[dependencies.nphysics]
+features = [ "2df32" ]
+path = "../nphysics"
