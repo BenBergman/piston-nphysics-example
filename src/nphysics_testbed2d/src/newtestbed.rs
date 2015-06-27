@@ -163,7 +163,13 @@ impl<'a> NewTestbed<'a> {
     }
 
     fn run_loop(&mut self, mut state: TestbedState) {
-        while self.window.is_open() {
+        for e in self.pwindow.clone() {
+            self.old_run_step(&mut state);
+        }
+    }
+
+    fn old_run_step(&mut self, mut state: &mut TestbedState) {
+        if self.window.is_open() {
             self.process_events(&mut state);
 
             self.window.clear(&Color::black());
