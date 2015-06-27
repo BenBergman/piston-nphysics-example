@@ -17,13 +17,14 @@ use nphysics::object::RigidBody;
 use nphysics::detection::joint::{Fixed, Anchor};
 use camera::Camera;
 use fps::Fps;
-use engine::GraphicsManager;
+use newengine::GraphicsManager;
 use draw_helper;
 
 use self::piston_window::{
     PistonWindow,
     Size,
     WindowSettings,
+    clear,
 };
 
 fn usage(exe_name: &str) {
@@ -163,22 +164,40 @@ impl<'a> NewTestbed<'a> {
     }
 
     fn run_loop(&mut self, mut state: TestbedState) {
-        for e in self.pwindow.clone() {
-            self.old_run_step(&mut state);
+        for mut e in self.pwindow.clone() {
+            /*
+            e.draw_2d(|_c, g| {
+                clear([0.5, 1.0, 0.5, 1.0], g);
+            });
+            */
+            let old = false;
+
+            if old {
+                self.old_run_step(&mut state);
+            }
+
+            state.fps.reset();
+            self.progress_world(&mut state);
+            state.fps.register_delta();
+
+            self.graphics.draw_update();
+            self.graphics.new_draw(&mut e, &state.camera);
+
+            if old {
+                self.old_run_step_end(&mut state);
+            }
         }
     }
 
     fn old_run_step(&mut self, mut state: &mut TestbedState) {
         if self.window.is_open() {
             self.process_events(&mut state);
-
             self.window.clear(&Color::black());
+        }
+    }
 
-            state.fps.reset();
-
-            self.progress_world(&mut state);
-
-            state.fps.register_delta();
+    fn old_run_step_end(&mut self, mut state: &mut TestbedState) {
+        if self.window.is_open() {
 
             self.graphics.draw(&mut self.window, &state.camera);
 

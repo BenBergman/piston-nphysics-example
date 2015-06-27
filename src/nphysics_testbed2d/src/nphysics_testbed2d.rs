@@ -15,6 +15,7 @@ pub use newtestbed::NewTestbed;
 mod testbed;
 mod newtestbed;
 mod engine;
+mod newengine;
 
 mod camera;
 mod fps;
@@ -22,6 +23,7 @@ mod draw_helper;
 
 mod objects {
     pub mod ball;
+    pub mod newball;
     pub mod box_node;
     pub mod lines;
     pub mod segment;
