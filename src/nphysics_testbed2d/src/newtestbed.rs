@@ -3,20 +3,12 @@ extern crate piston_window;
 use std::env;
 use std::rc::Rc;
 use std::cell::RefCell;
-use sfml::graphics::{RenderWindow, RenderTarget, Font};
-use sfml::window::{ContextSettings, VideoMode, Close};
-use sfml::window::event;
-use sfml::window::keyboard::Key;
-use sfml::window::mouse::MouseButton;
-use sfml::graphics::Color;
-use sfml::system::vector2::Vector2i;
 use na::{Pnt2, Pnt3, Iso2};
 use na;
 use nphysics::world::World;
 use nphysics::object::RigidBody;
 use nphysics::detection::joint::{Fixed, Anchor};
 use camera::Camera;
-use fps::Fps;
 use newengine::GraphicsManager;
 use draw_helper;
 
@@ -50,27 +42,24 @@ enum RunMode {
 
 pub struct NewTestbed<'a> {
     world:    World,
-    window:   RenderWindow,
     pwindow:  PistonWindow,
     graphics: GraphicsManager<'a>
 }
 
-struct TestbedState<'a> {
+struct TestbedState {
     running: RunMode,
     draw_colls: bool,
     camera: Camera,
-    fps: Fps<'a>,
     grabbed_object: Option<Rc<RefCell<RigidBody>>>,
     grabbed_object_joint: Option<Rc<RefCell<Fixed>>>,
 }
 
-impl<'a> TestbedState<'a> {
-    fn new(fnt: &'a Font) -> TestbedState<'a> {
+impl TestbedState {
+    fn new() -> TestbedState {
         TestbedState{
             running: RunMode::Running,
             draw_colls: false,
             camera: Camera::new(),
-            fps: Fps::new(&fnt),
             grabbed_object: None,
             grabbed_object_joint: None,
         }
@@ -79,19 +68,6 @@ impl<'a> TestbedState<'a> {
 
 impl<'a> NewTestbed<'a> {
     pub fn new_empty() -> NewTestbed<'a> {
-        let mode    = VideoMode::new_init(800, 600, 32);
-        let setting = ContextSettings {
-            depth_bits:         10,
-            stencil_bits:       10,
-            antialiasing_level: 2,
-            major_version:      0,
-            minor_version:      1
-        };
-        let window =
-            match RenderWindow::new(mode, "nphysics 2d demo", Close, &setting) {
-                Some(rwindow) => rwindow,
-                None          => panic!("Error on creating the sfml window.")
-            };
         let graphics = GraphicsManager::new();
 
         let pwindow = WindowSettings::new(
@@ -102,7 +78,6 @@ impl<'a> NewTestbed<'a> {
 
         NewTestbed {
             world:    World::new(),
-            window:   window,
             pwindow:  pwindow,
             graphics: graphics
         }
@@ -137,9 +112,8 @@ impl<'a> NewTestbed<'a> {
 
     pub fn run(&mut self) {
         let font_mem = include_bytes!("Inconsolata.otf");
-        let     fnt  = Font::new_from_memory(font_mem).unwrap();
 
-        let mut state = TestbedState::new(&fnt);
+        let mut state = TestbedState::new();
 
         let mut args    = env::args();
 
@@ -156,11 +130,7 @@ impl<'a> NewTestbed<'a> {
             }
         }
 
-        self.window.set_framerate_limit(60);
-
         self.run_loop(state);
-
-        self.window.close();
     }
 
     fn run_loop(&mut self, mut state: TestbedState) {
@@ -169,63 +139,16 @@ impl<'a> NewTestbed<'a> {
                 clear([0.0, 0.0, 0.0, 1.0], g);
             });
 
-            let old = false;
-            if old {
-                self.old_run_step(&mut state);
-            }
-
-            state.fps.reset();
             self.progress_world(&mut state);
-            state.fps.register_delta();
 
             self.graphics.draw_update();
             self.graphics.new_draw(&mut e, &state.camera);
-
-            if old {
-                self.old_run_step_end(&mut state);
-            }
         }
     }
 
-    fn old_run_step(&mut self, mut state: &mut TestbedState) {
-        if self.window.is_open() {
-            self.process_events(&mut state);
-            self.window.clear(&Color::black());
-        }
-    }
-
-    fn old_run_step_end(&mut self, mut state: &mut TestbedState) {
-        if self.window.is_open() {
-
-            self.graphics.draw(&mut self.window, &state.camera);
-
-            state.camera.activate_scene(&mut self.window);
-            self.draw_collisions(&mut state);
-
-            state.camera.activate_ui(&mut self.window);
-            state.fps.draw_registered(&mut self.window);
-
-            self.window.display();
-        }
-    }
-
-    fn process_events(&mut self, mut state: &mut TestbedState) {
-        loop {
-            match self.window.poll_event() {
-                event::KeyPressed{code, ..} => self.process_key_press(&mut state, code),
-                event::MouseButtonPressed{button, x, y} => self.process_mouse_press(&mut state, button, x, y),
-                event::MouseButtonReleased{button, x, y} => self.process_mouse_release(&mut state, button, x, y),
-                event::MouseMoved{x, y} => self.process_mouse_moved(&mut state, x, y),
-                event::Closed  => self.window.close(),
-                event::NoEvent => break,
-                e              => state.camera.handle_event(&e)
-            }
-        }
-    }
-
+    /*
     fn process_key_press(&mut self, state: &mut TestbedState, code: Key) {
         match code {
-            Key::Escape => self.window.close(),
             Key::S      => state.running = RunMode::Step,
             Key::Space  => state.draw_colls = !state.draw_colls,
             Key::T      => {
@@ -317,6 +240,7 @@ impl<'a> NewTestbed<'a> {
             None => state.camera.handle_event(&event::MouseMoved{x: x, y: y})
         };
     }
+    */
 
     fn progress_world(&mut self, state: &mut TestbedState) {
         if state.running != RunMode::Stop {
@@ -330,7 +254,7 @@ impl<'a> NewTestbed<'a> {
 
     fn draw_collisions(&mut self, state: &mut TestbedState) {
         if state.draw_colls {
-            draw_helper::draw_colls(&mut self.window, &mut self.world);
+            //draw_helper::draw_colls(&mut self.window, &mut self.world);
         }
     }
 }
