@@ -67,43 +67,5 @@ fn create_the_balls(world: &mut World) {
 
 fn run_simulation(world: World) {
     let mut testbed = Testbed::new(world);
-    //let mut testbed = NewTestbed::new(world);
-
     testbed.run();
 }
-
-
-/*
-struct NewTestbed {
-    world: World,
-}
-
-
-impl NewTestbed {
-    fn new(world: World) -> NewTestbed {
-        NewTestbed { world: world }
-    }
-
-    fn run(&self) {
-        self.run_game();
-    }
-
-    fn run_game(&self) {
-        let mut window = create_window();
-        for e in window {
-            e.draw_2d(|_c, g| {
-                clear([0.5, 1.0, 0.5, 1.0], g);
-            });
-        }
-    }
-}
-
-
-fn create_window() -> PistonWindow {
-    WindowSettings::new(
-        "Rust-2048".to_string(),
-        Size { width: 500, height: 400 })
-        .exit_on_esc(true)
-        .into()
-}
-*/

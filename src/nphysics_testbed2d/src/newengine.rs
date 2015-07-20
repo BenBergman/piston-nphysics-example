@@ -5,23 +5,14 @@ extern crate gfx;
 
 use std::rc::Rc;
 use std::cell::RefCell;
-use std::sync::Arc;
 use std::collections::HashMap;
 use rand::{SeedableRng, XorShiftRng, Rng};
-use sfml::graphics::RenderWindow;
-use na::{Pnt2, Pnt3, Iso2};
+use na::{Pnt3, Iso2};
 use na;
 use nphysics::object::RigidBody;
 use ncollide::inspection::Repr2;
 use ncollide::shape;
-use camera::Camera;
 use objects::newball::Ball;
-
-use self::piston_window::{
-    Ellipse,
-    PistonWindow,
-    clear,
-};
 
 use self::piston_window::context::Context;
 
@@ -31,20 +22,6 @@ use self::gfx::device::command::CommandBuffer;
 
 pub enum SceneNode<'a> {
     BallNode(Ball<'a>),
-}
-
-impl<'a> SceneNode<'a> {
-    pub fn select(&mut self) {
-        match *self {
-            SceneNode::BallNode(ref mut n) => n.select(),
-        }
-    }
-
-    pub fn unselect(&mut self) {
-        match *self {
-            SceneNode::BallNode(ref mut n) => n.unselect(),
-        }
-    }
 }
 
 pub struct GraphicsManager<'a> {
@@ -138,20 +115,6 @@ impl<'a> GraphicsManager<'a> {
         }
     }
 
-    pub fn draw(&mut self, rw: &mut RenderWindow, c: &Camera) {
-        c.activate_scene(rw);
-
-        for (_, ns) in self.rb2sn.iter_mut() {
-            for n in ns.iter_mut() {
-                match *n {
-                    SceneNode::BallNode(ref n) => n.draw(rw),
-                }
-            }
-        }
-
-        c.activate_ui(rw);
-    }
-
     pub fn new_draw(&mut self, c: Context, g: &mut GfxGraphics<Resources, CommandBuffer<Resources>, Output>) {
         //println!("new_draw");
         for (_, ns) in self.rb2sn.iter_mut() {
@@ -184,9 +147,5 @@ impl<'a> GraphicsManager<'a> {
         self.obj2color.insert(key, color);
 
         color
-    }
-
-    pub fn body_to_scene_node(&mut self, rb: &Rc<RefCell<RigidBody>>) -> Option<&mut Vec<SceneNode<'a>>> {
-        self.rb2sn.get_mut(&(&**rb as *const RefCell<RigidBody> as usize))
     }
 }

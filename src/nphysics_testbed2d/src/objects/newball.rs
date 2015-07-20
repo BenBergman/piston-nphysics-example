@@ -6,7 +6,6 @@ extern crate gfx;
 use std::f32;
 use std::rc::Rc;
 use std::cell::RefCell;
-use sfml::graphics;
 use sfml::graphics::{CircleShape, Color, RenderTarget};
 use sfml::system::vector2;
 use na::{Pnt3, Iso2};
@@ -16,8 +15,6 @@ use draw_helper::DRAW_SCALE;
 
 use self::piston_window::{
     Ellipse,
-    PistonWindow,
-    clear,
     default_draw_state,
     DrawState,
 };
@@ -31,7 +28,6 @@ use self::gfx::device::command::CommandBuffer;
 
 pub struct Ball<'a> {
     color: Pnt3<u8>,
-    base_color: Pnt3<u8>,
     delta: Iso2<f32>,
     body:  Rc<RefCell<RigidBody>>,
     gfx:   CircleShape<'a>,
@@ -48,7 +44,6 @@ impl<'a> Ball<'a> {
 
         let mut res = Ball {
             color: color,
-            base_color: color,
             delta: delta,
             gfx:   CircleShape::new().unwrap(),
             newgfx: Ellipse::new([color.x as f32 / 255.0, color.y as f32 / 255.0, color.z as f32 / 255.0, 1.0]),
@@ -87,20 +82,8 @@ impl<'a> Ball<'a> {
         }
     }
 
-    pub fn draw(&self, rw: &mut graphics::RenderWindow) {
-        rw.draw(&self.gfx);
-    }
-
     pub fn new_draw(&self, c: Context, g: &mut GfxGraphics<Resources, CommandBuffer<Resources>, Output>) {
         let pos = self.gfx.get_position();
         self.newgfx.draw(circle(pos.x as f64, pos.y as f64, 10.8), self.draw_state, c.transform, g);
-    }
-
-    pub fn select(&mut self) {
-        self.color = Pnt3::new(200, 0, 0);
-    }
-
-    pub fn unselect(&mut self) {
-        self.color = self.base_color;
     }
 }
