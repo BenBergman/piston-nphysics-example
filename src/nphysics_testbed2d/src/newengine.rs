@@ -1,4 +1,7 @@
 extern crate piston_window;
+extern crate gfx_graphics;
+extern crate gfx_device_gl;
+extern crate gfx;
 
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -19,6 +22,12 @@ use self::piston_window::{
     PistonWindow,
     clear,
 };
+
+use self::piston_window::context::Context;
+
+use self::gfx_graphics::GfxGraphics;
+use self::gfx_device_gl::{Resources, Output};
+use self::gfx::device::command::CommandBuffer;
 
 pub enum SceneNode<'a> {
     BallNode(Ball<'a>),
@@ -119,6 +128,7 @@ impl<'a> GraphicsManager<'a> {
     }
 
     pub fn draw_update(&mut self) {
+        //println!("draw_update");
         for (_, ns) in self.rb2sn.iter_mut() {
             for n in ns.iter_mut() {
                 match *n {
@@ -142,11 +152,12 @@ impl<'a> GraphicsManager<'a> {
         c.activate_ui(rw);
     }
 
-    pub fn new_draw(&mut self, e: &mut PistonWindow, c: &Camera) {
+    pub fn new_draw(&mut self, c: Context, g: &mut GfxGraphics<Resources, CommandBuffer<Resources>, Output>) {
+        //println!("new_draw");
         for (_, ns) in self.rb2sn.iter_mut() {
             for n in ns.iter_mut() {
                 match *n {
-                    SceneNode::BallNode(ref n) => n.new_draw(e),
+                    SceneNode::BallNode(ref n) => n.new_draw(c, g),
                 }
             }
         }

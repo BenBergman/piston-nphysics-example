@@ -17,6 +17,8 @@ use self::piston_window::{
     Size,
     WindowSettings,
     clear,
+    Event,
+    Input,
 };
 
 fn usage(exe_name: &str) {
@@ -135,14 +137,23 @@ impl<'a> NewTestbed<'a> {
 
     fn run_loop(&mut self, mut state: TestbedState) {
         for mut e in self.pwindow.clone() {
-            e.draw_2d(|_c, g| {
-                clear([0.0, 0.0, 0.0, 1.0], g);
-            });
+            match e.clone().event.unwrap() {
+                //Event::Input(Press(Keyboard(_))) => {
+                Event::Update(_) => {
+                    self.progress_world(&mut state);
+                }
 
-            self.progress_world(&mut state);
+                Event::Render(_) => {
+                    self.graphics.draw_update();
+                    e.draw_2d(|c, g| {
+                        clear([0.0, 0.0, 0.0, 1.0], g);
+                        self.graphics.new_draw(c, g);
+                    });
+                }
+                //}
 
-            self.graphics.draw_update();
-            self.graphics.new_draw(&mut e, &state.camera);
+                _ => ()
+            }
         }
     }
 

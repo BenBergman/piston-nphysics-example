@@ -1,4 +1,7 @@
 extern crate piston_window;
+extern crate gfx_graphics;
+extern crate gfx_device_gl;
+extern crate gfx;
 
 use std::f32;
 use std::rc::Rc;
@@ -16,8 +19,15 @@ use self::piston_window::{
     PistonWindow,
     clear,
     default_draw_state,
+    DrawState,
 };
+
 use self::piston_window::ellipse::circle;
+use self::piston_window::context::Context;
+
+use self::gfx_graphics::GfxGraphics;
+use self::gfx_device_gl::{Resources, Output};
+use self::gfx::device::command::CommandBuffer;
 
 pub struct Ball<'a> {
     color: Pnt3<u8>,
@@ -26,6 +36,7 @@ pub struct Ball<'a> {
     body:  Rc<RefCell<RigidBody>>,
     gfx:   CircleShape<'a>,
     newgfx: Ellipse,
+    draw_state: &'static DrawState,
 }
 
 impl<'a> Ball<'a> {
@@ -41,7 +52,8 @@ impl<'a> Ball<'a> {
             delta: delta,
             gfx:   CircleShape::new().unwrap(),
             newgfx: Ellipse::new([color.x as f32 / 255.0, color.y as f32 / 255.0, color.z as f32 / 255.0, 1.0]),
-            body:  body
+            body:  body,
+            draw_state: default_draw_state(),
         };
 
         res.gfx.set_fill_color(&Color::new_rgb(color.x, color.y, color.z));
@@ -79,11 +91,9 @@ impl<'a> Ball<'a> {
         rw.draw(&self.gfx);
     }
 
-    pub fn new_draw(&self, e: &mut PistonWindow) {
-        e.draw_2d(|c, g| {
-            let pos = self.gfx.get_position();
-            self.newgfx.draw(circle(pos.x as f64, pos.y as f64, self.gfx.get_radius() as f64), default_draw_state(), c.transform, g);
-        });
+    pub fn new_draw(&self, c: Context, g: &mut GfxGraphics<Resources, CommandBuffer<Resources>, Output>) {
+        let pos = self.gfx.get_position();
+        self.newgfx.draw(circle(pos.x as f64, pos.y as f64, 10.8), self.draw_state, c.transform, g);
     }
 
     pub fn select(&mut self) {
