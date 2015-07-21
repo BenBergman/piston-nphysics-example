@@ -20,18 +20,18 @@ use self::gfx_graphics::GfxGraphics;
 use self::gfx_device_gl::{Resources, Output};
 use self::gfx::device::command::CommandBuffer;
 
-pub enum SceneNode<'a> {
-    BallNode(Ball<'a>),
+pub enum SceneNode {
+    BallNode(Ball),
 }
 
-pub struct GraphicsManager<'a> {
+pub struct GraphicsManager {
     rand:      XorShiftRng,
-    rb2sn:     HashMap<usize, Vec<SceneNode<'a>>>,
+    rb2sn:     HashMap<usize, Vec<SceneNode>>,
     obj2color: HashMap<usize, Pnt3<u8>>
 }
 
-impl<'a> GraphicsManager<'a> {
-    pub fn new() -> GraphicsManager<'a> {
+impl GraphicsManager {
+    pub fn new() -> GraphicsManager {
         GraphicsManager {
             rand:      SeedableRng::from_seed([0, 1, 2, 3]),
             rb2sn:     HashMap::new(),
@@ -57,7 +57,7 @@ impl<'a> GraphicsManager<'a> {
                  body:  Rc<RefCell<RigidBody>>,
                  delta: Iso2<f32>,
                  shape: &Repr2<f32>,
-                 out:   &mut Vec<SceneNode<'a>>) {
+                 out:   &mut Vec<SceneNode>) {
         type Pl = shape::Plane2<f32>;
         type Bl = shape::Ball2<f32>;
         type Cx = shape::Convex2<f32>;

@@ -37,10 +37,10 @@ enum RunMode {
     Step
 }
 
-pub struct NewTestbed<'a> {
+pub struct NewTestbed {
     world:    World,
     pwindow:  PistonWindow,
-    graphics: GraphicsManager<'a>
+    graphics: GraphicsManager
 }
 
 struct TestbedState {
@@ -55,8 +55,8 @@ impl TestbedState {
     }
 }
 
-impl<'a> NewTestbed<'a> {
-    pub fn new_empty() -> NewTestbed<'a> {
+impl NewTestbed {
+    pub fn new_empty() -> NewTestbed {
         let graphics = GraphicsManager::new();
 
         let pwindow = WindowSettings::new(
@@ -72,7 +72,7 @@ impl<'a> NewTestbed<'a> {
         }
     }
 
-    pub fn new(world: World) -> NewTestbed<'a> {
+    pub fn new(world: World) -> NewTestbed {
         let mut res = NewTestbed::new_empty();
 
         res.set_world(world);
