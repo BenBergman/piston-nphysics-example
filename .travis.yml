@@ -3,7 +3,8 @@ rust:
     - stable
     - beta
     - nightly
-sudo: false
+install:
+    - sudo apt-get install libsfml-dev
 script:
   - cargo build --verbose
 notifications:
