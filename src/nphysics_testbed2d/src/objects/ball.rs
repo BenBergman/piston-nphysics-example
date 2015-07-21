@@ -9,7 +9,6 @@ use std::cell::RefCell;
 use na::{Pnt2, Pnt3, Iso2};
 use na;
 use nphysics::object::RigidBody;
-use draw_helper::DRAW_SCALE;
 
 use self::piston_window::{
     Ellipse,
@@ -23,6 +22,8 @@ use self::piston_window::context::Context;
 use self::gfx_graphics::GfxGraphics;
 use self::gfx_device_gl::{Resources, Output};
 use self::gfx::device::command::CommandBuffer;
+
+pub static DRAW_SCALE: f32 = 20.0;
 
 pub struct Ball {
     color: Pnt3<u8>,

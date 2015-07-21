@@ -11,7 +11,6 @@ features = [ "2df32" ]
 git = "https://github.com/sebcrozet/nphysics"
 
 [dependencies]
-sfml = "*"
 nalgebra = "*"
 time = "*"
 num = "*"
