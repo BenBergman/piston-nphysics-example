@@ -9,7 +9,7 @@ use na::{Vec2, Translation};
 use ncollide::shape::{Ball, Plane};
 use nphysics::world::World;
 use nphysics::object::RigidBody;
-use nphysics_testbed2d::NewTestbed as Testbed;
+use nphysics_testbed2d::Testbed;
 
 fn main() {
     let mut world = create_the_world();
